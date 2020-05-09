@@ -12,7 +12,7 @@ public:
 
     Vector3d Reflect(const Vector3d &normal) const;
     Vector3d Refract(const Vector3d &normal, double ior) const;
-    double Fresnel(const Vector3d &normal, double ior) const;
+    double   Fresnel(const Vector3d &normal, double ior) const;
 
     const Point3d&  origin()    const { return ori_; }
     const Vector3d& direction() const { return dir_; }

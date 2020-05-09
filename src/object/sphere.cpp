@@ -28,3 +28,7 @@ bool Sphere::Hit(const Ray &ray, double t_min, double t_max, HitRecord &record) 
         return false;
     }
 }
+
+AABB Sphere::Box() const {
+    return AABB(center_ - radius_, center_ + radius_);
+}

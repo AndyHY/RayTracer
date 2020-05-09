@@ -10,9 +10,11 @@ public:
 
     virtual bool Hit(const Ray &ray, double t_min, double t_max, HitRecord &record) const override;
 
+    virtual AABB Box() const override;
+
 private:
-    Point3d  center_;
-    double   radius_;
+    Point3d center_;
+    double  radius_;
 };
 
 #endif
