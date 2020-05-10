@@ -17,9 +17,9 @@ void RayTracer::RayTracing() const {
             double x = (2 * ((i + 0.5) / screen_.pixel_width) - 1) * scale * aspect;
             double y = (1 - 2 * ((j + 0.5) / screen_.pixel_height)) * scale;
 
-            Matrix44d transform = Translate<double>(0.0, 5.0, -3.0) * RotateX<double>(-10.0);
-            Point3d origin = transform * Point3d(0.0);
-            Vector3d direction = transform * Vector3d(x, y, -1.0);
+            //Matrix44d transform = Translate<double>(0.0, 5.0, 0.0);
+            Point3d origin = Point3d(0.0);
+            Vector3d direction = Vector3d(x, y, -1.0);
 
             Ray ray(origin, direction);
             Vector3d color = Sampler::Intersect(ray, scene_, 0);

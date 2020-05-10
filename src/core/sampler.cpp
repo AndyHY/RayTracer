@@ -22,7 +22,7 @@ Vector3d Sampler::Intersect(const Ray &ray, const Scene &scene, int depth) {
     HitRecord record;
     if (scene.Hit(ray, kEpsilon, kInfinity, record))
         return Sample(record, scene, ray, depth);
-    return Vector3d(0.2, 0.2, 0.2);
+     return Vector3d(0.0);
 }
 
 Vector3d Sampler::SampleDiffuse(const HitRecord &record, const Scene &scene) {

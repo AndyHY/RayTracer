@@ -7,7 +7,7 @@ OBJECTS  = accelerator/AABB_tree.o accelerator/AABB.o \
 		   light/distant_light.o light/point_light.o \
 		   material/diffuse.o material/glass.o material/glossy.o material/mirror.o \
 		   math/matrix.o math/point.o math/ray.o math/utility.o math/vector.o \
-		   object/plane.o object/sphere.o object/triangle.o \
+		   object/plane.o object/sphere.o object/triangle_mesh.o object/triangle.o \
 		   utility/hit_record.o
 
 RayTracer: $(OBJECTS) main/main.cpp

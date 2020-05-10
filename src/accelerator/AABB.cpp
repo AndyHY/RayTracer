@@ -36,7 +36,7 @@ bool AABB::Hit(const Ray &ray) const {
     double t_min = std::max(t_x_min, std::max(t_y_min, t_z_min));
     double t_max = std::min(t_x_max, std::min(t_y_max, t_z_max));
 
-    if (t_min < t_max && t_max > 0)
+    if (t_min <= t_max && t_max >= 0)
         return true;
     return false;
 }

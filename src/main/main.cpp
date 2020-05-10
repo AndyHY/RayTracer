@@ -8,6 +8,7 @@
 #include "../object/plane.hpp"
 #include "../object/sphere.hpp"
 #include "../object/triangle.hpp"
+#include "../object/triangle_mesh.hpp"
 
 #include "../core/material.hpp"
 #include "../material/glass.hpp"
@@ -22,20 +23,36 @@
 #include "../accelerator/AABB_tree.hpp"
 
 int main(int argc, char **argv) {
-    Screen screen(1920, 1080, 90.0);
+    Screen screen(1080, 1080, 40.0);
 
     Scene scene;
-    scene.AddObject(make_shared<Sphere>(Point3d(-6.0, 5.0, -22.0), 5.0,
-                                        make_shared<Diffuse>(kDiffuse, Vector3d(0.2, 1.0, 0.2))));
-    scene.AddObject(make_shared<Sphere>(Point3d(6.0, 5.0, -22.0), 5.0,
-                                        make_shared<Glossy>(kGlossy, Vector3d(0.2, 0.2, 1.0), 0.2, 500)));
-    scene.AddObject(make_shared<Sphere>(Point3d(0.0, 5.0, -17.0), 2.5,
-                                        make_shared<Glass>(kGlass, Vector3d(0.0), 1.3)));
-    // scene.AddObject(make_shared<Plane>(Point3d(0.0), Vector3d(0.0, 1.0, 0.0),
-    //                                     make_shared<Mirror>(kMirror, Vector3d(0.2, 0.2, 0.2), 0.8)));
 
-    scene.AddLight(make_shared<DistantLight>(Vector3d(-1.0, -2.0, -1.0), 2.0));
-    scene.AddLight(make_shared<DistantLight>(Vector3d(1.0, -2.0, -1.0), 2.0));
+    shared_ptr<Material> red = make_shared<Diffuse>(kDiffuse, Vector3d(0.63, 0.065, 0.05));
+    shared_ptr<Material> green = make_shared<Diffuse>(kDiffuse, Vector3d(0.14, 0.45, 0.091));
+    shared_ptr<Material> white = make_shared<Diffuse>(kDiffuse, Vector3d(0.725, 0.71, 0.68));
+
+    TriangleMesh left_wall = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/left.obj", red);
+    scene.AddObject(make_shared<TriangleMesh>(left_wall));
+
+    TriangleMesh right_wall = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/right.obj", green);
+    scene.AddObject(make_shared<TriangleMesh>(right_wall));
+
+    TriangleMesh back_wall = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/back.obj", white);
+    scene.AddObject(make_shared<TriangleMesh>(back_wall));
+
+    TriangleMesh floor = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/floor.obj", white);
+    scene.AddObject(make_shared<TriangleMesh>(floor));
+
+    TriangleMesh ceiling = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/ceiling.obj", white);
+    scene.AddObject(make_shared<TriangleMesh>(ceiling));
+
+    TriangleMesh tall_cube = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/tall_cube.obj", white);
+    scene.AddObject(make_shared<TriangleMesh>(tall_cube));
+
+    TriangleMesh short_cube = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/short_cube.obj", white);
+    scene.AddObject(make_shared<TriangleMesh>(short_cube));
+    
+    scene.AddLight(make_shared<PointLight>(Point3d(0.0, 24.5, -100.0), 50000.0));
 
     auto objects = scene.objects();
     scene.BuildAABBTree(make_shared<AABBTree>(4, objects));
