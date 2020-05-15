@@ -5,10 +5,12 @@
 
 class PointLight : public Light {
 public:
-    PointLight(const Point3d &pos, double intensity = 1.0, const Vector3d &color = Vector3d(1.0))
-        : Light(intensity, color), pos_(pos) {}
+    PointLight(const Vector3d &radiance, const Point3d &pos)
+        : Light(radiance), pos_(pos) {}
     
-    virtual void Illuminate(const Point3d &hit_point, Vector3d &energy, Vector3d &dir, double &dis) const override;
+    virtual Vector3d Sample(const Point3d &object_pos, Point3d &light_pos, Vector3d &normal, double &pdf) const override;
+    
+    virtual bool Hit(const Ray &ray, double t_min, double t_max) const override;
     
 private:
     Point3d pos_;  //position

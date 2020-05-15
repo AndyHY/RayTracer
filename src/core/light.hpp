@@ -6,14 +6,17 @@
 
 class Light {
 public:
-    Light(double intensity, const Vector3d &color) : color_(color), intensity_(intensity) {}
+    Light(const Vector3d &radiance) : radiance_(radiance) {}
     virtual ~Light() = default;
 
-    virtual void Illuminate(const Point3d &hit_point, Vector3d &energy, Vector3d &dir, double &dis) const = 0;
+    virtual Vector3d Sample(const Point3d &object_pos, Point3d &light_pos, Vector3d &normal, double &pdf) const = 0;
+
+    virtual bool Hit(const Ray &ray, double t_min, double t_max) const = 0;
+
+    const Vector3d& radiance() const { return radiance_; }
 
 protected:
-    Vector3d color_;
-    double intensity_;
+    Vector3d radiance_;
 };
 
 #endif

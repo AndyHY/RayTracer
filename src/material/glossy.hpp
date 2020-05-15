@@ -5,8 +5,12 @@
 
 class Glossy : public Material {
 public:
-    Glossy(Type type, const Vector3d &albedo, double kd, double exp)
-        : Material(type, albedo), kd_(kd), ks_(1.0 - kd), exp_(exp) {}
+    Glossy(Type type, const Vector3d &albedo, const shared_ptr<Sampler3D> &sampler, double kd, double exp)
+        : Material(type, albedo, sampler), kd_(kd), ks_(1.0 - kd), exp_(exp) {}
+    
+    virtual void Sample(const Vector3d &wo, const Vector3d &n, Vector3d &wi, double &pdf) const override;
+
+    virtual Vector3d BRDF(const Vector3d &wo, const Vector3d &n, const Vector3d &wi) const override;
 
     double kd()  const { return kd_; }
     double ks()  const { return ks_; }

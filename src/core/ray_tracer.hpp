@@ -1,7 +1,7 @@
 #ifndef RAY_TRACER_HPP
 #define RAY_TRACER_HPP
 
-#include "sampler.hpp"
+#include "scene.hpp"
 
 struct Screen {
     Screen(int w, int h, double fov) : pixel_width(w), pixel_height(h), vfov(fov) {}
@@ -14,13 +14,21 @@ struct Screen {
 
 class RayTracer {
 public:
-    RayTracer(const Screen &screen, const Scene &scene) : screen_(screen), scene_(scene) {}
+    RayTracer(const Screen &screen, const Scene &scene, double RussianRoulette = 0.8, int ssp = 8)
+        : screen_(screen), scene_(scene), RussianRoulette_(RussianRoulette), ssp_(ssp) {}
 
     void RayTracing() const;
 
 private:
+    Vector3d Intersect(const Ray &ray, const Scene &scene, int depth) const;
+
+    void UpdateProgress(double progress) const;
+
+private:
     Screen screen_;
     Scene  scene_;
+    double RussianRoulette_;
+    int    ssp_;
 };
 
 #endif

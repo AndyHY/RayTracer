@@ -5,10 +5,12 @@
 
 class DistantLight : public Light {
 public:
-    DistantLight(const Vector3d &dir, double intensity = 1.0, const Vector3d &color = Vector3d(1.0))
-        : Light(intensity, color), dir_(Normalize(dir)) {}
+    DistantLight(const Vector3d &radiance, const Vector3d &dir)
+        : Light(radiance), dir_(Normalize(dir)) {}
     
-    virtual void Illuminate(const Point3d &hit_point, Vector3d &energy, Vector3d &dir, double &dis) const override;
+    virtual Vector3d Sample(const Point3d &object_pos, Point3d &light_pos, Vector3d &normal, double &pdf) const override;
+
+    virtual bool Hit(const Ray &ray, double t_min, double t_max) const override;
 
 private:
     Vector3d dir_;  //direction

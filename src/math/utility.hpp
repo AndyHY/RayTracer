@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory> 
 #include <limits>
+#include <random>
 #include <algorithm>
 
 #include "ray.hpp"
@@ -34,6 +35,13 @@ inline Vector3d Clamp(double low, double high, const Vector3d &v) {
         Clamp(low, high, v.y_),
         Clamp(low, high, v.z_)
     );
+}
+
+inline double RandomDouble() {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> dist(0.0, 1.0);
+    return dist(rng);
 }
 
 #endif

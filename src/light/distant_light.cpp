@@ -1,7 +1,9 @@
 #include "distant_light.hpp"
 
-void DistantLight::Illuminate(const Point3d &hit_point, Vector3d &energy, Vector3d &dir, double &dis) const {
-    energy = color_ * intensity_;
-    dir = dir_;
-    dis = kInfinity;
+Vector3d DistantLight::Sample(const Point3d &object_pos, Point3d &light_pos, Vector3d &normal, double &pdf) const {
+    return Vector3d();
+}
+
+bool DistantLight::Hit(const Ray &ray, double t_min, double t_max) const {
+    return false;
 }
