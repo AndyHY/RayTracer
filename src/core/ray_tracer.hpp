@@ -14,8 +14,8 @@ struct Screen {
 
 class RayTracer {
 public:
-    RayTracer(const Screen &screen, const Scene &scene, double RussianRoulette = 0.8, int ssp = 8)
-        : screen_(screen), scene_(scene), RussianRoulette_(RussianRoulette), ssp_(ssp) {}
+    RayTracer(const Screen &screen, const Scene &scene, double RussianRoulette = 0.8, int spp = 8, int num_threads = 8)
+        : screen_(screen), scene_(scene), RussianRoulette_(RussianRoulette), spp_(spp), num_threads_(num_threads) {}
 
     void RayTracing() const;
 
@@ -28,7 +28,8 @@ private:
     Screen screen_;
     Scene  scene_;
     double RussianRoulette_;
-    int    ssp_;
+    int    spp_;
+    int    num_threads_;
 };
 
 #endif

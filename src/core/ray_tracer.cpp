@@ -1,8 +1,12 @@
 #include "ray_tracer.hpp"
-#include <iostream>
+
+#include <unistd.h>
 #include <fstream>
+#include <iostream>
+
 #include "../math/point.hpp"
 #include "../math/matrix.hpp"
+#include "../utility/thread_pool.hpp"
 
 void RayTracer::RayTracing() const {
     std::ofstream file("../image/image.ppm");
@@ -10,6 +14,8 @@ void RayTracer::RayTracing() const {
 
     double scale = tan(DegreeToRadian(screen_.vfov / 2));
     double aspect = static_cast<double>(screen_.pixel_width) / screen_.pixel_height;
+                                   
+    ThreadPool thread_pool(num_threads_);
 
     for (int j = 0; j < screen_.pixel_height; j++) {
         for (int i = 0; i < screen_.pixel_width; i++) {
@@ -17,11 +23,17 @@ void RayTracer::RayTracing() const {
             double y = (1 - 2 * ((j + 0.5) / screen_.pixel_height)) * scale;
 
             Ray ray(Point3d(0.0), Vector3d(x, y, -1.0));
+
+            auto task = [&]() -> Vector3d { return Intersect(ray, scene_, 0); };
             
+            vector<std::future<Vector3d>> results;
+            for (int k = 0; k < spp_; k++)
+                results.emplace_back(thread_pool.AddTask(task));
+
             Vector3d color(0.0);
-            for (int i = 0; i < ssp_; i++)
-                color += Intersect(ray, scene_, 0);
-            color = Clamp(0.0, 1.0, color / ssp_);
+            for (int k = 0; k < spp_; k++)
+                color += results[k].get();
+            color = Clamp(0.0, 1.0, color / spp_);
 
             int r = static_cast<int>(255 * std::pow(color[0], 0.6));
             int g = static_cast<int>(255 * std::pow(color[1], 0.6));
