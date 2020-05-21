@@ -1,50 +1,61 @@
 #include "ray_tracer.hpp"
 
-#include <unistd.h>
 #include <fstream>
 #include <iostream>
 
 #include "../math/point.hpp"
 #include "../math/matrix.hpp"
-#include "../utility/thread_pool.hpp"
 
-void RayTracer::RayTracing() const {
-    std::ofstream file("../image/image.ppm");
-    file << "P3\n" << screen_.pixel_width << " " << screen_.pixel_height << "\n255\n";
+void RayTracer::Render() {
+    for (int x = 0; x < screen_.pixel_width; x += tile_size_)
+        for (int y = 0; y < screen_.pixel_height; y += tile_size_)
+            work_queue_.AddWork(WorkItem(x, y, tile_size_, tile_size_));
+    
+    for (int i = 0; i < num_threads_; i++)
+        threads_[i] = std::thread(&RayTracer::ThreadTask, this);
+
+    for (int i = 0; i < num_threads_; i++)
+        threads_[i].join();
+}
+
+void RayTracer::ThreadTask() {
+    WorkItem work_item;
+    while (work_queue_.GetWork(work_item))
+        RenderTile(work_item.tile_x, work_item.tile_y, work_item.tile_w, work_item.tile_h);
+
+    num_done_++;
+    if (num_done_ == num_threads_)
+        SaveImage();
+}
+
+void RayTracer::RenderTile(int tile_x, int tile_y, int tile_w, int tile_h) {
+    int begin_x = tile_x;
+    int begin_y = tile_y;
+    int end_x = std::min(begin_x + tile_w, screen_.pixel_width);
+    int end_y = std::min(begin_y + tile_h, screen_.pixel_height);
+
+    for (int x = begin_x; x < end_x; x++)
+        for (int y = begin_y; y < end_y; y++)
+            RenderPixel(x, y);
+}
+
+void RayTracer::RenderPixel(int a, int b) {
+    double width = screen_.pixel_width;
+    double height = screen_.pixel_height;
 
     double scale = tan(DegreeToRadian(screen_.vfov / 2));
-    double aspect = static_cast<double>(screen_.pixel_width) / screen_.pixel_height;
-                                   
-    ThreadPool thread_pool(num_threads_);
+    double aspect = static_cast<double>(width) / height;
 
-    for (int j = 0; j < screen_.pixel_height; j++) {
-        for (int i = 0; i < screen_.pixel_width; i++) {
-            double x = (2 * ((i + 0.5) / screen_.pixel_width) - 1) * scale * aspect;
-            double y = (1 - 2 * ((j + 0.5) / screen_.pixel_height)) * scale;
+    double x = (2 * ((a + 0.5) / width) - 1) * scale * aspect;
+    double y = (1 - 2 * ((b + 0.5) / height)) * scale;
 
-            Ray ray(Point3d(0.0), Vector3d(x, y, -1.0));
+    Ray ray(Point3d(0.0), Vector3d(x, y, -1.0));
 
-            auto task = [&]() -> Vector3d { return Intersect(ray, scene_, 0); };
-            
-            vector<std::future<Vector3d>> results;
-            for (int k = 0; k < spp_; k++)
-                results.emplace_back(thread_pool.AddTask(task));
-
-            Vector3d color(0.0);
-            for (int k = 0; k < spp_; k++)
-                color += results[k].get();
-            color = Clamp(0.0, 1.0, color / spp_);
-
-            int r = static_cast<int>(255 * std::pow(color[0], 0.6));
-            int g = static_cast<int>(255 * std::pow(color[1], 0.6));
-            int b = static_cast<int>(255 * std::pow(color[2], 0.6));
-            file << r << " " << g << " " << b << "\n";
-        }
-        UpdateProgress(static_cast<double>(j) / screen_.pixel_height);
-    }
-    UpdateProgress(1.0);
-
-    file.close();
+    Vector3d color;
+    for (int i = 0; i < spp_; i++)
+        color += Intersect(ray, scene_, 0);
+    
+    frame_buffer_[b * width + a] = Clamp(0.0, 1.0, color / spp_);
 }
 
 Vector3d RayTracer::Intersect(const Ray &ray, const Scene &scene, int depth) const {
@@ -100,17 +111,16 @@ Vector3d RayTracer::Intersect(const Ray &ray, const Scene &scene, int depth) con
     return direct_light + indirect_light;
 }
 
-void RayTracer::UpdateProgress(double progress) const
-{
-    int barWidth = 70;
+void RayTracer::SaveImage() const {
+    std::ofstream file("../image/image.ppm");
+    file << "P3\n" << screen_.pixel_width << " " << screen_.pixel_height << "\n255\n";
 
-    std::cout << "[";
-    int pos = barWidth * progress;
-    for (int i = 0; i < barWidth; ++i) {
-        if (i < pos) std::cout << "=";
-        else if (i == pos) std::cout << ">";
-        else std::cout << " ";
+    for (int i = 0; i < screen_.pixel_width * screen_.pixel_height; i++) {
+        int r = static_cast<int>(255 * std::pow(frame_buffer_[i][0], 0.6));
+        int g = static_cast<int>(255 * std::pow(frame_buffer_[i][1], 0.6));
+        int b = static_cast<int>(255 * std::pow(frame_buffer_[i][2], 0.6));
+        file << r << " " << g << " " << b << "\n";
     }
-    std::cout << "] " << static_cast<int>(progress * 100.0) << " %\r";
-    std::cout.flush();
-};
+    
+    file.close();
+}

@@ -9,7 +9,7 @@ OBJECTS  = accelerator/AABB_tree.o accelerator/AABB.o \
 		   math/matrix.o math/point.o math/ray.o math/utility.o math/vector.o \
 		   object/plane.o object/sphere.o object/triangle_mesh.o object/triangle.o \
 		   sampler/uniform_sampler.o \
-		   utility/hit_record.o utility/thread_pool.o
+		   utility/hit_record.o utility/work_queue.o
 
 RayTracer: $(OBJECTS) main/main.cpp
 	$(CXX)  $(CPPFLAGS)  -o RayTracer $(OBJECTS) main/main.cpp -lpthread

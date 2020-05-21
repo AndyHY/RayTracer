@@ -72,7 +72,8 @@ int main(int argc, char **argv) {
     RayTracer ray_tracer(screen, scene);
 
     auto start = std::chrono::system_clock::now();
-    ray_tracer.RayTracing();
+    std::cout << "Rendering..." << std::endl;
+    ray_tracer.Render();
     auto stop  = std::chrono::system_clock::now();
 
     std::cout << "Render complete: \n";
