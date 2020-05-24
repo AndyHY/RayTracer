@@ -26,7 +26,7 @@ struct WorkItem {
 class RayTracer {
 public:
     RayTracer(const Screen &screen, const Scene &scene, double RussianRoulette = 0.8,
-              int spp = 8, int num_threads = 4, int num_done = 0, int tile_size = 32)
+              int spp = 128, int num_threads = 8, int num_done = 0, int tile_size = 32)
         : screen_(screen),
           scene_(scene), 
           RussianRoulette_(RussianRoulette),

@@ -52,13 +52,28 @@ int main(int argc, char **argv) {
     TriangleMesh ceiling = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/ceiling.obj", white);
     scene.AddObject(make_shared<TriangleMesh>(ceiling));
 
-    TriangleMesh tall_cube = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/tall_cube.obj", white);
-    scene.AddObject(make_shared<TriangleMesh>(tall_cube));
+    // TriangleMesh tall_cube = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/tall_cube.obj", white);
+    // scene.AddObject(make_shared<TriangleMesh>(tall_cube));
 
-    TriangleMesh short_cube = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/short_cube.obj", white);
-    scene.AddObject(make_shared<TriangleMesh>(short_cube));
+    // TriangleMesh tall_cube1 = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/tall_cube1.obj", white);
+    // scene.AddObject(make_shared<TriangleMesh>(tall_cube1));
+
+    // shared_ptr<Material> mirror = make_shared<Mirror>(kMirror, Vector3d(), Vector3d(0.8));
+    // TriangleMesh tall_cube2 = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/tall_cube2.obj", mirror);
+    // scene.AddObject(make_shared<TriangleMesh>(tall_cube2));
+
+    // TriangleMesh short_cube = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/short_cube.obj", white);
+    // scene.AddObject(make_shared<TriangleMesh>(short_cube));
+
+    shared_ptr<Material> glass = make_shared<Glass>(kGlass, Vector3d(), 1.5, Vector3d(1.0), Vector3d(1.0));
+
+    Sphere big_sphere(Point3d(-10.0, -15.0, -110.0), 10.0, glass);
+    scene.AddObject(make_shared<Sphere>(big_sphere));
     
-    Vector3d radiance = 8.0 * Vector3d(0.747+0.058, 0.747+0.258, 0.747) + 15.6 * Vector3d(0.740+0.287,0.740+0.160,0.740) + 18.4 * Vector3d(0.737+0.642,0.737+0.159,0.737);
+    Sphere small_sphere(Point3d(14.0, -19.0, -91.0), 6.0, glass);
+    scene.AddObject(make_shared<Sphere>(small_sphere));
+
+    Vector3d radiance = 7.0 * Vector3d(0.747+0.058, 0.747+0.258, 0.747) + 14.6 * Vector3d(0.740+0.287,0.740+0.160,0.740) + 17.4 * Vector3d(0.737+0.642,0.737+0.159,0.737);
     Point3d pos(0.0, 24.5, -100.0);
     Vector3d width(15.0, 0.0, 0.0);
     Vector3d height(0.0, 0.0, -15.0);

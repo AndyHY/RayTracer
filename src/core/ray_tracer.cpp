@@ -75,21 +75,23 @@ Vector3d RayTracer::Intersect(const Ray &ray, const Scene &scene, int depth) con
     auto wo = -ray.direction();
 
     //计算直接光照
-    for (const auto &light : lights) {
-        Point3d light_pos; Vector3d light_normal; double light_pdf;
-        auto Li = light->Sample(object_pos, light_pos, light_normal, light_pdf);
+    if (!record.hit_material->IsDelta()) {
+        for (const auto &light : lights) {
+            Point3d light_pos; Vector3d light_normal; double light_pdf;
+            auto Li = light->Sample(object_pos, light_pos, light_normal, light_pdf);
 
-        auto wi = Normalize(light_pos - object_pos);
+            auto wi = Normalize(light_pos - object_pos);
 
-        Ray shadow_ray(object_pos, wi);
-        HitRecord shadow_record;
-        auto dis = (light_pos - object_pos).Length2();
-        auto hit = scene.Hit(shadow_ray, kEpsilon, sqrt(dis), shadow_record);
-        if (!hit) {
-            auto fr = record.hit_material->BRDF(wo, object_normal, wi);
-            auto cos_theta1 = Dot(object_normal, wi);
-            auto cos_theta2 = Dot(light_normal, -wi);
-            direct_light += Mult(Li, fr) * cos_theta1 * cos_theta2 / dis / light_pdf;
+            Ray shadow_ray(object_pos, wi);
+            HitRecord shadow_record;
+            auto dis = (light_pos - object_pos).Length2();
+            auto hit = scene.Hit(shadow_ray, kEpsilon, sqrt(dis), shadow_record);
+            if (!hit) {
+                auto fr = record.hit_material->BSDF(wo, object_normal, wi);
+                auto cos_theta1 = Dot(object_normal, wi);
+                auto cos_theta2 = Dot(light_normal, -wi);
+                direct_light += Mult(Li, fr) * cos_theta1 * cos_theta2 / dis / light_pdf;
+            }
         }
     }
 
@@ -102,7 +104,7 @@ Vector3d RayTracer::Intersect(const Ray &ray, const Scene &scene, int depth) con
 
         Ray next_ray(object_pos, wi);
         auto Li = Intersect(next_ray, scene, depth + 1);
-        auto fr = record.hit_material->BRDF(wo, object_normal, wi);
+        auto fr = record.hit_material->BSDF(wo, object_normal, wi);
         auto cos_theta = Dot(object_normal, wi);
         
         indirect_light += Mult(Li, fr) * cos_theta / pdf / RussianRoulette_;

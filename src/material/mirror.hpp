@@ -5,17 +5,17 @@
 
 class Mirror : public Material {
 public:
-    Mirror(Type type, const Vector3d &albedo, const shared_ptr<Sampler3D> &sampler, double km)
-        : Material(type, albedo, sampler), km_(km) {}
+    Mirror(Type type, const Vector3d &albedo, const Vector3d &reflectance)
+        : Material(type, albedo), reflectance_(reflectance) {}
+
+    virtual bool IsDelta() const override { return true; };
 
     virtual void Sample(const Vector3d &wo, const Vector3d &n, Vector3d &wi, double &pdf) const override;
 
-    virtual Vector3d BRDF(const Vector3d &wo, const Vector3d &n, const Vector3d &wi) const override;
-
-    double km() const { return km_; }
+    virtual Vector3d BSDF(const Vector3d &wo, const Vector3d &n, const Vector3d &wi) const override;
 
 private:
-    double km_;  //k_mirror
+    Vector3d reflectance_;
 };
 
 #endif
