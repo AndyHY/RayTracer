@@ -10,7 +10,7 @@ public:
 
     virtual bool IsDelta() const override { return false; };
     
-    virtual void Sample(const Vector3d &wo, const Vector3d &n, Vector3d &wi, double &pdf) const override;
+    virtual Vector3d Sample(const Vector3d &wo, const Vector3d &n, Vector3d &wi, double &pdf) const override;
 
     virtual Vector3d BSDF(const Vector3d &wo, const Vector3d &n, const Vector3d &wi) const override;
 

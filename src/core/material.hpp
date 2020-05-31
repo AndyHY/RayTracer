@@ -13,12 +13,12 @@ public:
 
     virtual bool IsDelta() const = 0;
 
-    virtual void Sample(const Vector3d &wo, const Vector3d &n, Vector3d &wi, double &pdf) const = 0;
+    virtual Vector3d Sample(const Vector3d &wo, const Vector3d &n, Vector3d &wi, double &pdf) const = 0;
     
     virtual Vector3d BSDF(const Vector3d &wo, const Vector3d &n, const Vector3d &wi) const = 0;
 
     Vector3d Reflect(const Vector3d &wo, const Vector3d &normal) const;
-    Vector3d Refract(const Vector3d &wo, const Vector3d &normal, double ior) const;
+    bool Refract(const Vector3d &wo, const Vector3d &normal, double ior, Vector3d &wi) const;
     double   Fresnel(const Vector3d &wo, const Vector3d &normal, double ior) const;
 
     Type type() const { return type_; }

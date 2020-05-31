@@ -87,10 +87,11 @@ Vector3d RayTracer::Intersect(const Ray &ray, const Scene &scene, int depth) con
             auto dis = (light_pos - object_pos).Length2();
             auto hit = scene.Hit(shadow_ray, kEpsilon, sqrt(dis), shadow_record);
             if (!hit) {
-                auto fr = record.hit_material->BSDF(wo, object_normal, wi);
-                auto cos_theta1 = Dot(object_normal, wi);
-                auto cos_theta2 = Dot(light_normal, -wi);
-                direct_light += Mult(Li, fr) * cos_theta1 * cos_theta2 / dis / light_pdf;
+                auto f = record.hit_material->BSDF(wo, object_normal, wi);
+                auto cos_theta1 = std::abs(Dot(object_normal, wi));
+                auto cos_theta2 = std::abs(Dot(light_normal, -wi));
+
+                direct_light += Mult(Li, f) * cos_theta1 * cos_theta2 / dis / light_pdf;
             }
         }
     }
@@ -100,14 +101,14 @@ Vector3d RayTracer::Intersect(const Ray &ray, const Scene &scene, int depth) con
     //计算间接光照
     if (RandomDouble() < RussianRoulette_) {
         Vector3d wi; double pdf;
-        record.hit_material->Sample(wo, object_normal, wi, pdf);
+        auto f = record.hit_material->Sample(wo, object_normal, wi, pdf);
 
         Ray next_ray(object_pos, wi);
         auto Li = Intersect(next_ray, scene, depth + 1);
-        auto fr = record.hit_material->BSDF(wo, object_normal, wi);
-        auto cos_theta = Dot(object_normal, wi);
         
-        indirect_light += Mult(Li, fr) * cos_theta / pdf / RussianRoulette_;
+        auto cos_theta = std::abs(Dot(object_normal, wi));
+        
+        indirect_light += Mult(Li, f) * cos_theta / pdf / RussianRoulette_;
     }
 
     return direct_light + indirect_light;

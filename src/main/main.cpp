@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
     Sphere small_sphere(Point3d(14.0, -19.0, -91.0), 6.0, glass);
     scene.AddObject(make_shared<Sphere>(small_sphere));
 
-    Vector3d radiance = 7.0 * Vector3d(0.747+0.058, 0.747+0.258, 0.747) + 14.6 * Vector3d(0.740+0.287,0.740+0.160,0.740) + 17.4 * Vector3d(0.737+0.642,0.737+0.159,0.737);
+    Vector3d radiance = Vector3d(30.0);
     Point3d pos(0.0, 24.5, -100.0);
     Vector3d width(15.0, 0.0, 0.0);
     Vector3d height(0.0, 0.0, -15.0);
@@ -86,13 +86,13 @@ int main(int argc, char **argv) {
 
     RayTracer ray_tracer(screen, scene);
 
-    auto start = std::chrono::system_clock::now();
     std::cout << "Rendering..." << std::endl;
+    auto start = std::chrono::system_clock::now();
     ray_tracer.Render();
     auto stop  = std::chrono::system_clock::now();
 
     std::cout << "Render complete: \n";
-    std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::hours>(stop - start).count() << " hours\n";
+    std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::hours>  (stop - start).count() << " hours\n";
     std::cout << "          : " << std::chrono::duration_cast<std::chrono::minutes>(stop - start).count() << " minutes\n";
     std::cout << "          : " << std::chrono::duration_cast<std::chrono::seconds>(stop - start).count() << " seconds\n";
 

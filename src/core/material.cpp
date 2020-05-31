@@ -1,10 +1,10 @@
 #include "material.hpp"
 
 Vector3d Material::Reflect(const Vector3d &wo, const Vector3d &normal) const {
-    return wo - 2 * Dot(wo, normal) * normal;
+    return -wo + 2 * Dot(wo, normal) * normal;
 }
 
-Vector3d Material::Refract(const Vector3d &wo, const Vector3d &normal, double ior) const {
+bool Material::Refract(const Vector3d &wo, const Vector3d &normal, double ior, Vector3d &wi) const {
     double eta1 = 1.0, eta2 = ior, eta;
     double cos1 = Dot(wo, normal);
     Vector3d n = normal;
@@ -20,8 +20,9 @@ Vector3d Material::Refract(const Vector3d &wo, const Vector3d &normal, double io
     double cos22 = 1 - eta * eta * (1 - cos1 * cos1);
 
     if (cos22 < 0)  //total internal reflection
-        return Vector3d(0.0);
-    return eta * (wo + cos1 * n) - sqrt(cos22) * n;
+        return false;
+    wi = eta * (wo + cos1 * n) - sqrt(cos22) * n;
+    return true;
 }
 
 double Material::Fresnel(const Vector3d &wo, const Vector3d &normal, double ior) const {

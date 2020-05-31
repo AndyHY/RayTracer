@@ -36,14 +36,15 @@ Vector3d LocalToWorld(const Vector3d &a, const Vector3d &N) {
     return a.x_ * B + a.y_ * C + a.z_ * N;
 }
 
-void Diffuse::Sample(const Vector3d &wo, const Vector3d &n, Vector3d &wi, double &pdf) const {
+Vector3d Diffuse::Sample(const Vector3d &wo, const Vector3d &n, Vector3d &wi, double &pdf) const {
     //wi = Normalize(LocalToWorld(n) * sampler_->Sample());
     double x1 = RandomDouble(), x2 = RandomDouble();    
     double z = fabs(1.0f - 2.0f * x1);                     
     double r = sqrt(1.0f - z * z), phi = 2 * M_PI * x2;    
     Vector3d local_ray(r * cos(phi), r * sin(phi), z);
-    wi = Normalize(LocalToWorld(local_ray, n));
+    wi  = Normalize(LocalToWorld(local_ray, n));
     pdf = 1 / (2 * kPi);
+    return albedo_ / kPi;
 }
 
 Vector3d Diffuse::BSDF(const Vector3d &wo, const Vector3d &n, const Vector3d &wi) const {

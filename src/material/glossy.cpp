@@ -1,6 +1,6 @@
 #include "glossy.hpp"
 
-void Glossy::Sample(const Vector3d &wo, const Vector3d &n, Vector3d &wi, double &pdf) const {
+Vector3d Glossy::Sample(const Vector3d &wo, const Vector3d &n, Vector3d &wi, double &pdf) const {
 
 }
 
