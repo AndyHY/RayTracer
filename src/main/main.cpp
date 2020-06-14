@@ -28,6 +28,10 @@
 
 #include "../accelerator/AABB_tree.hpp"
 
+#include "../core/microfacet.hpp"
+#include "../microfacet/Beckmann.hpp"
+#include "../microfacet/TrowbridgeReitz.hpp"
+
 int main(int argc, char **argv) {
     Screen screen(1080, 1080, 40.0);
 
@@ -65,12 +69,14 @@ int main(int argc, char **argv) {
     // TriangleMesh short_cube = TriangleMesh::CreateTriangleMesh("../models/Cornellbox/short_cube.obj", white);
     // scene.AddObject(make_shared<TriangleMesh>(short_cube));
 
-    shared_ptr<Material> glass = make_shared<Glass>(kGlass, Vector3d(), 1.5, Vector3d(1.0), Vector3d(1.0));
+    // shared_ptr<Material> glass = make_shared<Glass>(kGlass, Vector3d(), 1.5, Vector3d(1.0), Vector3d(1.0));
+    shared_ptr<MicrofacetDistribution> GGX = make_shared<TrowbridgeReitzDistribution>(TrowbridgeReitzDistribution::RoughnessToAlpha(0.1));
+    shared_ptr<Material> glossy = make_shared<Glossy>(kGlossy, Vector3d(), Vector3d(1.0), GGX);
 
-    Sphere big_sphere(Point3d(-10.0, -15.0, -110.0), 10.0, glass);
+    Sphere big_sphere(Point3d(-10.0, -15.0, -110.0), 10.0, glossy);
     scene.AddObject(make_shared<Sphere>(big_sphere));
     
-    Sphere small_sphere(Point3d(14.0, -19.0, -91.0), 6.0, glass);
+    Sphere small_sphere(Point3d(14.0, -19.0, -91.0), 6.0, glossy);
     scene.AddObject(make_shared<Sphere>(small_sphere));
 
     Vector3d radiance = Vector3d(30.0);

@@ -3,6 +3,7 @@
 
 #include "sampler.hpp"
 #include "../math/utility.hpp"
+#include "../utility/hit_record.hpp"
 
 enum Type { kDiffuse, kMirror, kGlossy, kGlass };
 
@@ -13,13 +14,16 @@ public:
 
     virtual bool IsDelta() const = 0;
 
-    virtual Vector3d Sample(const Vector3d &wo, const Vector3d &n, Vector3d &wi, double &pdf) const = 0;
+    virtual Vector3d Sample(const Vector3d &wo, const HitRecord &record, Vector3d &wi, double &pdf) const = 0;
     
-    virtual Vector3d BSDF(const Vector3d &wo, const Vector3d &n, const Vector3d &wi) const = 0;
+    virtual Vector3d BSDF(const Vector3d &wo, const HitRecord &record, const Vector3d &wi) const = 0;
 
     Vector3d Reflect(const Vector3d &wo, const Vector3d &normal) const;
     bool Refract(const Vector3d &wo, const Vector3d &normal, double ior, Vector3d &wi) const;
-    double   Fresnel(const Vector3d &wo, const Vector3d &normal, double ior) const;
+    double Fresnel(const Vector3d &wo, const Vector3d &normal, double ior) const;
+
+    Vector3d LocalToWorld(const Vector3d &w, const HitRecord &record) const;
+    Vector3d WorldToLocal(const Vector3d &w, const HitRecord &record) const;
 
     Type type() const { return type_; }
     const Vector3d& albedo() const { return albedo_; }

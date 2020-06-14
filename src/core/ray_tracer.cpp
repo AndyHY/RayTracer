@@ -87,7 +87,7 @@ Vector3d RayTracer::Intersect(const Ray &ray, const Scene &scene, int depth) con
             auto dis = (light_pos - object_pos).Length2();
             auto hit = scene.Hit(shadow_ray, kEpsilon, sqrt(dis), shadow_record);
             if (!hit) {
-                auto f = record.hit_material->BSDF(wo, object_normal, wi);
+                auto f = record.hit_material->BSDF(wo, record, wi);
                 auto cos_theta1 = std::abs(Dot(object_normal, wi));
                 auto cos_theta2 = std::abs(Dot(light_normal, -wi));
 
@@ -101,7 +101,7 @@ Vector3d RayTracer::Intersect(const Ray &ray, const Scene &scene, int depth) con
     //计算间接光照
     if (RandomDouble() < RussianRoulette_) {
         Vector3d wi; double pdf;
-        auto f = record.hit_material->Sample(wo, object_normal, wi, pdf);
+        auto f = record.hit_material->Sample(wo, record, wi, pdf);
 
         Ray next_ray(object_pos, wi);
         auto Li = Intersect(next_ray, scene, depth + 1);

@@ -25,6 +25,10 @@ inline double RadianToDegree(double radian) {
     return radian * (180.0 / kPi);
 }
 
+inline Vector3d SphericalToCartesian(double sin_theta, double cos_theta, double phi) {
+    return Vector3d(sin_theta * std::cos(phi), sin_theta * std::sin(phi), cos_theta);
+}
+
 inline double Clamp(double low, double high, double value) {
     return std::max(low, std::min(high, value));
 }

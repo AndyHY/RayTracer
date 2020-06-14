@@ -38,3 +38,20 @@ double Material::Fresnel(const Vector3d &wo, const Vector3d &normal, double ior)
     double r2 = (eta1 * cos1 - eta2 * cos2) / (eta1 * cos1 + eta2 * cos2);
     return (r1 * r1 + r2 * r2) / 2;
 }
+
+// 使用右手系，与pbrt不同
+Vector3d Material::LocalToWorld(const Vector3d &w, const HitRecord &record) const {
+    Vector3d ts = record.ts;
+    Vector3d ss = record.ss;
+    Vector3d ns = record.ns;
+    return Vector3d(ts.x_ * w.x_ + ss.x_ * w.y_ + ns.x_ * w.z_,
+                    ts.y_ * w.x_ + ss.y_ * w.y_ + ns.y_ * w.z_,
+                    ts.z_ * w.x_ + ss.z_ * w.y_ + ns.z_ * w.z_);
+}
+
+Vector3d Material::WorldToLocal(const Vector3d &w, const HitRecord &record) const {
+    Vector3d ts = record.ts;
+    Vector3d ss = record.ss;
+    Vector3d ns = record.ns;
+    return Vector3d(Dot(w, ts), Dot(w, ss), Dot(w, ns));
+}

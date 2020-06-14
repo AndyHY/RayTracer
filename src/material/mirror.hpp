@@ -10,9 +10,9 @@ public:
 
     virtual bool IsDelta() const override { return true; };
 
-    virtual Vector3d Sample(const Vector3d &wo, const Vector3d &n, Vector3d &wi, double &pdf) const override;
+    virtual Vector3d Sample(const Vector3d &wo, const HitRecord &record, Vector3d &wi, double &pdf) const override;
 
-    virtual Vector3d BSDF(const Vector3d &wo, const Vector3d &n, const Vector3d &wi) const override;
+    virtual Vector3d BSDF(const Vector3d &wo, const HitRecord &record, const Vector3d &wi) const override;
 
 private:
     Vector3d reflectance_;
